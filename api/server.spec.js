@@ -12,8 +12,8 @@ describe('Post /register', () => {
 		return request(server)
 			.post('/api/auth/register')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'user',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(res.status).toBe(201)
@@ -24,8 +24,8 @@ describe('Post /register', () => {
 		return request(server)
 			.post('/api/auth/register')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'user',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(typeof res.body).toBe('object')
@@ -41,8 +41,8 @@ describe('Post /login', () => {
 		return request(server)
 			.post('/api/auth/login')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'user',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(res.status).toBe(200)
@@ -52,8 +52,8 @@ describe('Post /login', () => {
 		return request(server)
 			.post('/api/auth/login')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'user',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(typeof res.body).toBe('object')
@@ -69,8 +69,8 @@ describe('Get /jokes', () => {
 		return request(server)
 			.post('/api/login')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'user',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(res.status).toBe(200)
@@ -80,8 +80,8 @@ describe('Get /jokes', () => {
 		return request(server)
 			.post('/api/jokes')
 			.send({
-				username: 'Gabe',
-				password: 'Ball4theGame'
+				username: 'uer',
+				password: 'name'
 			})
 			.then((res) => {
 				expect(typeof res.body).toBe('object')
