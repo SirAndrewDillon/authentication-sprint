@@ -1,3 +1,3 @@
 module.exports = {
-	jwtSecret: process.env.JWT_SECRET || 'keeping our secret'
+	jwtSecret: process.env.JWT_SECRET || 'keep our secret'
 }
