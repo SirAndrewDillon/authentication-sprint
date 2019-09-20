@@ -1,70 +1,68 @@
 const router = require('express').Router()
 const bcrypt = require('bcryptjs')
+const secrets = require('../config/secrets')
+const Users = require('../api/users-modal.js')
+
 const jwt = require('jsonwebtoken')
 
-const Users = require('../jokes/jokes-model.js')
-const secrets = require('../config/secrets.js')
-const restricted = require('../auth/authenticate-middleware.js')
-
 router.post('/register', (req, res) => {
-	// implement registration
 	let user = req.body
-	const hash = bcrypt.hashSync(user.password, 5)
+	const hash = bcrypt.hashSync(user.password, 10)
 	user.password = hash
 
-	Users.addUser(user)
-		.then((user) => {
-			res.status(201).json(user)
+	Users.add(user)
+		.then((saved) => {
+			res.status(201).json(saved)
 		})
 		.catch((error) => {
-			res.status(500) / json({ message: 'Say my name..USER.' })
+			res.status(500).json(error)
 		})
 })
 
 router.post('/login', (req, res) => {
-	// implement login
 	let { username, password } = req.body
 
-	Users.findUser({ username })
+	Users.findBy({ username })
 		.first()
 		.then((user) => {
 			if (user && bcrypt.compareSync(password, user.password)) {
-				const token = getJwt(user)
+				const token = generateToken(user)
+				req.session.username = user.username
+				req.session.loggedIn = true
 				res.status(200).json({
-					message: `Welcome, you have the keys to immorality ${user.username}`,
 					token
 				})
 			} else {
-				res
-					.status(401)
-					.json({ message: 'You do not have the keys you will die!!' })
+				res.status(401).json({ message: 'You are not Jack!' })
 			}
 		})
 		.catch((error) => {
-			res.status(500).json({ message: 'Ouch that has to hurt!!' })
+			res.status(500).json(error)
 		})
 })
-
-router.get('/users', restricted, (req, res) => {
-	Users.getUsers()
-		.then((users) => {
-			res.status(200).json(users)
-		})
-		.catch((error) => {
-			res.status(500).json({ message: 'Come back later with a token!' })
-		})
-})
-
-function getJwt(user) {
+function generateToken(user) {
 	const payload = {
 		subject: user.id,
-		username: user.username,
-		jwtid: 1
+		username: user.username
 	}
+
 	const options = {
-		expiresIn: '1h'
+		expiresIn: '1d'
 	}
 	return jwt.sign(payload, secrets.jwtSecret, options)
 }
+
+router.get('/logout', (req, res) => {
+	req.session.destroy(() => {
+		res.status(200).json({ SAD: 'Goodbye Jack!' })
+	})
+})
+router.get('/users', (req, res) => {
+	Users.find()
+		.then((users) => {
+			res.json(users)
+		})
+		.catch((err) => res.send(err))
+})
 
 module.exports = router
